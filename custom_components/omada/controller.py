@@ -180,8 +180,9 @@ class OmadaController:
         return await self.hass.config_entries.async_unload_platforms(self._config_entry, [DOMAIN])
 
     def is_client_allowed(self, client_mac: str) -> bool:
-        """Return whether a client can be included due to the ssid filter settings"""
-        return not self.option_ssid_filter or client_mac not in self.api.clients or self.api.clients[client_mac].ssid in self.option_ssid_filter
+        """Return whether a client can be included due to the ssid filter settings:
+        either no ssid filter is defined or the client is active and in the filter."""
+        return not self.option_ssid_filter or (client_mac not in self.api.clients and self.api.clients[client_mac].ssid in self.option_ssid_filter)
 
     @callback
     def register_platform_entities(
